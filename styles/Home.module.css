@@ -2,6 +2,26 @@
   padding: 0 2rem;
 }
 
+.appBar {
+  background-color: #fff !important;
+  box-shadow: none !important;
+  border-bottom: 1px solid lightgray !important;
+  color:#000 !important;
+}
+
+.menuButton {
+  margin-right: 16px !important;
+  border-radius: 12px !important;
+  padding: 10px 17px !important;
+  margin-left: 1px !important;
+  margin-right: 1px !important;
+  color: #4cad50 !important;
+}
+
+.menulogoButton:hover{
+  background: none;
+}
+
 .main {
   min-height: 100vh;
   padding: 4rem 0;
@@ -12,24 +32,8 @@
   align-items: center;
 }
 
-.footer {
-  display: flex;
-  flex: 1;
-  padding: 2rem 0;
-  border-top: 1px solid #eaeaea;
-  justify-content: center;
-  align-items: center;
-}
-
-.footer a {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-grow: 1;
-}
-
 .title a {
-  color: #0070f3;
+  color: #4cad50;
   text-decoration: none;
 }
 
@@ -57,12 +61,10 @@
 }
 
 .code {
-  background: #fafafa;
-  border-radius: 5px;
-  padding: 0.75rem;
-  font-size: 1.1rem;
-  font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
-    Bitstream Vera Sans Mono, Courier New, monospace;
+  background: #f8f8f8;
+  border-radius: 12px;
+  padding: 1.5rem;
+  font-size: 1rem;
 }
 
 .grid {
@@ -88,8 +90,8 @@
 .card:hover,
 .card:focus,
 .card:active {
-  color: #0070f3;
-  border-color: #0070f3;
+  color: #4cad50;
+  border-color: #4cad50;
 }
 
 .card h2 {
