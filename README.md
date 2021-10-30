@@ -9,7 +9,7 @@ This project can be viewed at https://ai2-js.netlify.app
 ✅ Parse Screen Files into JSON  
 ⭕️ Compile Screen Files into HTML (WIP)  
 ❌ Compile Screen Files into JavaScript  
-❌ Compile Screen Files into React.JS
+❌ Compile Screen Files into React.JS  
 ❌ Read Blockly File (.bky)
 
 ## Usage
