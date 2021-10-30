@@ -7,9 +7,9 @@ This project can be viewed at https://ai2-js.netlify.app
 ## Status
 ✅ Import MIT App Inventor Project (.aia)   
 ✅ Parse Screen Files into JSON  
-⭕️ Compile Screen Files into HTML (WIP)  
-❌ Compile Screen Files into JavaScript  
-❌ Compile Screen Files into React.JS  
+⭕️ Convert Screen Files (WIP)  
+❌ JavaScript/React.JS Support  
+❌ HTML5 Support  
 ❌ Read Blockly File (.bky)
 
 ## Usage
