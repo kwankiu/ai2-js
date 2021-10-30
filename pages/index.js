@@ -56,9 +56,7 @@ export default function Home() {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar className={styles.appBar} position="fixed">
         <Toolbar>
-          <Typography variant="h6" component="div" style={{color: '#4cad50',fontWeight: '600',marginRight: '10px'}}>
-            AI2.js
-          </Typography>
+          <img src="/logo.svg" alt="AI2.js" style={{height: '32px',marginRight: '10px'}} />
         <label htmlFor="contained-button-file">
         <IconButton className={styles.menuButton} component="span">
           <FolderOpenTwoToneIcon />
