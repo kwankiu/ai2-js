@@ -1,46 +1,88 @@
+/* AI2.js - A project that convert MIT App Inventor 2 Project (.aia) into Web Apps
+Author: Samuel (kwankiu), Hei (Hei-dev)
+All rights reserved.
+*/
+
+import * as React from 'react';
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 
+//For Zip
 import JSZip from 'jszip';
-import * as React from 'react';
+import { saveAs } from 'file-saver';
+
+//Material-UI
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import FolderOpenTwoToneIcon from '@mui/icons-material/FolderOpenTwoTone';
 
 export default function Home() {
+  
+  //Declare regular variables
+  const [sourcefile,setSourceFile] = React.useState()
 
-  const [sourcefile,setSourceFile] = React.useState(null)
+  //create a zip component
+  const zip = new JSZip()
+
+  //html head infomation
   const [title,setTitle] = React.useState('AI2.js - The Ultimate Converter')
   const [description,setDescription] = React.useState('A project that convert MIT App Inventor 2 Project (.aia) into Web Apps.')
   const [favicon,setFavIcon] = React.useState('/favicon.ico')
 
+  //variables to store imported data
+  var properties; // store properties from project.properties
+  var screen = []; // array to store all data from .scm file
+  // var blocks = []; // declared for future implementation
+
   const readFile = (files) => {
    try {
-    console.log(files[0].name)
-    const zip = new JSZip()
+    let filecontent; // to combine scm files content
+    console.log(files[0].name) // show the uploaded file name
     for (var i = 0; i < files.length; i++) {
      zip.loadAsync(files[i])                               
      .then(function(zip) {
         zip.forEach(function (relativePath, zipEntry) {
-            console.log(zipEntry.name)
-            if (zipEntry.name.includes('.scm')) {
-            zip.file(zipEntry.name).async("string").then(function (data) {
+            console.log(zipEntry.name) // List all file from uploaded zip
+            if (zipEntry.name == 'youngandroidproject/project.properties'){
+              zip.file(zipEntry.name).async("string").then(function (data) {
+                //convert project.properties into JSON
+                data = data.replaceAll(new RegExp("[\r\n]", "gm"), '","')
+                data = '{"' + data + '}'
+                data = data.replaceAll('=','":"')
+                data = data.replace(',"}','}') 
+                //save generated json to properties
+                properties = JSON.parse(data)
+                console.log(properties)
+                setSourceFile(JSON.stringify(properties, null, 4))
+              });
+            } else if  (zipEntry.name.includes('.scm')) {
+              zip.file(zipEntry.name).async("string").then(function (data) {
+              //convert .scm file into JSON
               data = data.replace('#|','')
               data = data.replace('$JSON','')
               data = data.replace('|#','')
-              setSourceFile(JSON.stringify(JSON.parse(data), null, 4))
-              setTitle(JSON.parse(data).Properties.AppName)
-              setDescription(JSON.parse(data).Properties.AboutScreen)
+              if (filecontent) {
+              filecontent = filecontent + JSON.stringify(JSON.parse(data), null, 4);
+              } else {
+              filecontent = JSON.stringify(JSON.parse(data), null, 4);
+              }
+              // setSourceFile(filecontent)
+              setTitle(JSON.parse(data).Properties.AppName) //set html title
+              setDescription(JSON.parse(data).Properties.AboutScreen) //set html descriptions
+              console.log(JSON.parse(data).Properties) //show json list of properties of each screen
             });
+          
           } else if (zipEntry.name.includes('.png')){
             zip.file(zipEntry.name).async("base64").then(function (data) {
+              //TODO : save all image into an array as base64
               setFavIcon('data:image/jpeg;base64,'+data)
             });
           } else if (zipEntry.name.includes('/external_comps')){
+              //Detect and warn users when Extensions are used in the AIA
+              //Since we are unable to port Extensions (Java Bytecode) to Web Technologies
             console.log('Warning : Extensions are not supported, all related items will generally be ignored.')
           }
         });
@@ -51,6 +93,24 @@ export default function Home() {
    }
   }
 
+  const exportFile = () => {
+
+    // not added, this will generate an empty zip file as no files are put inside
+    // usage
+    // zip.file(filename,content)
+    // zip.folder(foldername)
+    // zip.remove(filename/foldername)
+    let appname = "project"
+    let file_extension = ".zip"
+    let zipname = appname + file_extension
+
+    zip.generateAsync({type:"blob"})
+    .then(function (blob) {
+    saveAs(blob, zipname);
+    });
+  }
+  
+  // Main Content
   return (
     <React.Fragment>
     <Box sx={{ flexGrow: 1 }}>
@@ -88,8 +148,9 @@ export default function Home() {
         </label>
 
         <br />
-
         <pre className={styles.code}>{sourcefile}</pre>
+        <br />
+        <Button onClick={exportFile} variant="outlined" color="success" component="span" style={{textTransform:'none', display:'none'}}>Download File (.zip)</Button>
 
       </main>
     </div>
