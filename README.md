@@ -22,6 +22,11 @@ This project can be viewed at https://ai2-js.netlify.app
 
 This project is built with NextJS,
 
+**Before you begin, you will need to install [`npm`](https://nodejs.org/en/download/) and [`yarn`](https://yarnpkg.com/en/docs/install).**
+
+To install the required node packages :
+`yarn install`
+
 To run a dev server :
 `yarn dev`
 
