@@ -50,10 +50,12 @@ export default function Home() {
             if (zipEntry.name == 'youngandroidproject/project.properties'){
               zip.file(zipEntry.name).async("string").then(function (data) {
                 //convert project.properties into JSON
+                data = data.replace(/^.*#.*$/mg,'') //remove # comment
                 data = data.replaceAll(new RegExp("[\r\n]", "gm"), '","')
                 data = '{"' + data + '}'
                 data = data.replaceAll('=','":"')
                 data = data.replace(',"}','}') 
+                data = data.replaceAll('"",','') //remove empty string from comment
                 //save generated json to properties
                 properties = JSON.parse(data)
                 console.log(properties)
