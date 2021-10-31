@@ -40,6 +40,7 @@ export default function Home() {
   const readFile = (files) => {
    try {
     let filecontent; // to combine scm files content
+    let scmi = 1; //count number of scm 
     console.log(files[0].name) // show the uploaded file name
     for (var i = 0; i < files.length; i++) {
      zip.loadAsync(files[i])                               
@@ -64,32 +65,45 @@ export default function Home() {
               data = data.replace('#|','')
               data = data.replace('$JSON','')
               data = data.replace('|#','')
+              screen[scmi] = JSON.stringify(JSON.parse(data), null, 4);
+              console.log(scmi)
+              scmi = scmi + 1;
               if (filecontent) {
-              filecontent = filecontent + JSON.stringify(JSON.parse(data), null, 4);
+              filecontent = filecontent + screen[scmi];
               } else {
-              filecontent = JSON.stringify(JSON.parse(data), null, 4);
+              filecontent = screen[scmi];
               }
-              // setSourceFile(filecontent)
               setTitle(JSON.parse(data).Properties.AppName) //set html title
               setDescription(JSON.parse(data).Properties.AboutScreen) //set html descriptions
               console.log(JSON.parse(data).Properties) //show json list of properties of each screen
-            });
-          
-          } else if (zipEntry.name.includes('.png')){
-            zip.file(zipEntry.name).async("base64").then(function (data) {
+              });
+            } else if (zipEntry.name.includes('assets/')){
+             if (zipEntry.name.includes('.png')){
+              zip.file(zipEntry.name).async("base64").then(function (data) {
               //TODO : save all image into an array as base64
-              setFavIcon('data:image/jpeg;base64,'+data)
-            });
-          } else if (zipEntry.name.includes('/external_comps')){
+              console.log('data:image/png;base64,'+data)
+              });
+             } else if (zipEntry.name.includes('.jpg') || zipEntry.name.includes('.jpeg')){
+              zip.file(zipEntry.name).async("base64").then(function (data) {
+              //TODO : save all image into an array as base64
+              console.log('data:image/jpeg;base64,'+data)
+              });             
+             } else if (zipEntry.name.includes('external_comps/')){
               //Detect and warn users when Extensions are used in the AIA
               //Since we are unable to port Extensions (Java Bytecode) to Web Technologies
-            console.log('Warning : Extensions are not supported, all related items will generally be ignored.')
-          }
+              console.log('Warning : Extensions are not supported, all related items will generally be ignored.')
+             } else {
+              //TODO : all non base64 or string assets should be loaded as binary
+             }
+            } 
         });
       });
     }
    } catch (error) {
      console.log(error)
+   } finally {
+     //Since properties are defined at the last (due to a-z order), for actions that depends on data from properties, it has to be done after the for loop
+     //TODO
    }
   }
 
@@ -112,7 +126,7 @@ export default function Home() {
   
   // Main Content
   return (
-    <React.Fragment>
+    <React.Fragment> 
     <Box sx={{ flexGrow: 1 }}>
       <AppBar className={styles.appBar} position="fixed">
         <Toolbar>
