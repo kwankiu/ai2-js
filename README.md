@@ -4,6 +4,8 @@ A project that convert MIT App Inventor 2 Project (.aia) into Web Apps.
 
 This project can be viewed at https://ai2-js.netlify.app
 
+### Note : This project is under development, please do not expect anything to be fully functional. If you are interested (to contribute or get details) in this project, you may open an issue to reach us.
+
 ## Status
 ✅ Import MIT App Inventor Project (.aia)   
 ✅ Parse Screen Files into JSON  
