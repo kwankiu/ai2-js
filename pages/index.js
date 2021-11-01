@@ -51,11 +51,20 @@ export default function Home() {
               zip.file(zipEntry.name).async("string").then(function (data) {
                 //convert project.properties into JSON
                 data = data.replace(/^.*#.*$/mg,'') //remove # comment
+                //replace " , and : to avoid error from executing the follwing operations 
+                data = data.replaceAll('"','&#34;')
+                data = data.replaceAll(',','&#44;')
+                data = data.replaceAll(':','&#58;')
+                //operation begins
                 data = data.replace(/^\s*\n/gm, '') //remove empty lines
                 data = data.replaceAll(new RegExp("[\r\n]", "gm"), '","')
                 data = '{"' + data + '}'
                 data = data.replaceAll('=','":"')
                 data = data.replace(',"}','}') 
+                //operation done, now convert them to JSON supported characters
+                data = data.replaceAll('&#34;','\\"')
+                data = data.replaceAll('&#44;',',')
+                data = data.replaceAll('&#58;',':')                
                 //save generated json to properties
                 properties = JSON.parse(data)
                 console.log(properties)
