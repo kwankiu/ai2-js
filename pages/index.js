@@ -64,7 +64,12 @@ export default function Home() {
                 //operation done, now convert them to JSON supported characters
                 data = data.replaceAll('&#34;','\\"')
                 data = data.replaceAll('&#44;',',')
-                data = data.replaceAll('&#58;',':')                
+                data = data.replaceAll('&#58;',':')        
+                //parse json that exist inside a property
+                data = data.replaceAll('\\','')
+                data = data.replaceAll('"[','[')
+                data = data.replaceAll(']"',']')    
+                console.log(data)   
                 //save generated json to properties
                 properties = JSON.parse(data)
                 console.log(properties)
