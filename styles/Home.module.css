@@ -65,6 +65,8 @@
   border-radius: 12px;
   padding: 1.5rem;
   font-size: 1rem;
+  overflow-x: scroll;
+  max-width: 100%;
 }
 
 .grid {
