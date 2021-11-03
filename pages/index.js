@@ -197,7 +197,7 @@ export default function Home() {
         </label>
 
         <br />
-        {/* <pre className={styles.code}>{loadprojectitemcontainer}</pre>*/}
+        <pre className={styles.code}>{sourcefile}</pre>
         {loadprojectitemcontainer.map((item,index) => (
           <Button key={index} onClick={() => {readFile(item.content)}} className={styles.projectItemContainer} variant="outlined" startIcon={<FolderOpenTwoToneIcon color="success" />}><p style={{display: "contents"}}>{item.name}</p></Button>
            ))}
