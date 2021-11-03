@@ -12,18 +12,14 @@ import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 
 //Material-UI
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
+import { AppBar, Box, Toolbar, Button, IconButton } from '@mui/material';
 import FolderOpenTwoToneIcon from '@mui/icons-material/FolderOpenTwoTone';
 
 export default function Home() {
   
   //Declare regular variables
   const [sourcefile,setSourceFile] = React.useState()
-
+  const [loadprojectitemcontainer,setProjectitemcontainer] = React.useState([])
   //create a zip component
   const zip = new JSZip()
 
@@ -35,9 +31,12 @@ export default function Home() {
   //variables to store imported data
   var properties; // store properties from project.properties
   var screen = []; // array to store all data from .scm file
+  var multiaia = []; // store all aia if a zip is uploaded containing multiple aia files
   // var blocks = []; // declared for future implementation
+ 
 
-  const readFile = (files) => {
+ const readFile = (files) => {
+   if (files) {
    try {
     let filecontent; // to combine scm files content
     let scmi = 1; //count number of scm 
@@ -65,6 +64,8 @@ export default function Home() {
                 data = data.replaceAll('&#34;','\\"')
                 data = data.replaceAll('&#44;',',')
                 data = data.replaceAll('&#58;',':')        
+                let bdata = data //this is a tmp workground, create a backup of data, if it doesnt work, then revert this atempt
+                try {
                 //parse json that exist inside a property
                 data = data.replaceAll('\\','')
                 data = data.replaceAll('"[','[')
@@ -72,17 +73,21 @@ export default function Home() {
                 console.log(data)   
                 //save generated json to properties
                 properties = JSON.parse(data)
+                } catch {   
+                console.log(bdata)   
+                //save generated json to properties
+                properties = JSON.parse(bdata)  
+                }
                 console.log(properties)
                 setSourceFile(JSON.stringify(properties, null, 4))
               });
-            } else if  (zipEntry.name.includes('.scm')) {
+            } else if (zipEntry.name.includes('.scm')) {
               zip.file(zipEntry.name).async("string").then(function (data) {
               //convert .scm file into JSON
               data = data.replace('#|','')
               data = data.replace('$JSON','')
               data = data.replace('|#','')
               screen[scmi] = JSON.stringify(JSON.parse(data), null, 4);
-              console.log(scmi)
               scmi = scmi + 1;
               if (filecontent) {
               filecontent = filecontent + screen[scmi];
@@ -111,7 +116,18 @@ export default function Home() {
              } else {
               //TODO : all non base64 or string assets should be loaded as binary
              }
-            } 
+            }  else if (zipEntry.name.includes('.aia')){
+              zip.file(zipEntry.name).async("blob").then(function (data) {
+              //When user uploaded a zip that contains one or more aia instead of an aia, here's the magic  
+              let list = new DataTransfer();
+              var nestedfile = new File([data], zipEntry.name);
+              list.items.add(nestedfile);
+              multiaia.push({
+                name: zipEntry.name,
+                content: list.files
+              });
+              });
+            }
         });
       });
     }
@@ -120,8 +136,11 @@ export default function Home() {
    } finally {
      //Since properties are defined at the last (due to a-z order), for actions that depends on data from properties, it has to be done after the for loop
      //TODO
+       setProjectitemcontainer([{name:'Loading ...',content:null}])
+       setTimeout(() => {setProjectitemcontainer(multiaia)},3500);
    }
   }
+ }
 
   const exportFile = () => {
 
@@ -178,9 +197,12 @@ export default function Home() {
         </label>
 
         <br />
-        <pre className={styles.code}>{sourcefile}</pre>
+        {/* <pre className={styles.code}>{loadprojectitemcontainer}</pre>*/}
+        {loadprojectitemcontainer.map((item,index) => (
+          <Button key={index} onClick={() => {readFile(item.content)}} className={styles.projectItemContainer} variant="outlined" startIcon={<FolderOpenTwoToneIcon color="success" />}><p style={{display: "contents"}}>{item.name}</p></Button>
+           ))}
         <br />
-        <Button onClick={exportFile} variant="outlined" color="success" component="span" style={{textTransform:'none', display:'none'}}>Download File (.zip)</Button>
+        <Button onClick={exportFile} variant="outlined" color="success" component="span" style={{textTransform:'none', display: 'none'}}>Export File (.zip)</Button>
 
       </main>
     </div>
