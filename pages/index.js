@@ -40,11 +40,12 @@ export default function Home() {
    try {
     let filecontent; // to combine scm files content
     let scmi = 1; //count number of scm 
-    console.log(files[0].name) // show the uploaded file name
+    console.log("Successfully uploaded " + files[0].name) // show the uploaded file name
     for (var i = 0; i < files.length; i++) {
      zip.loadAsync(files[i])                               
      .then(function(zip) {
         zip.forEach(function (relativePath, zipEntry) {
+          if (!zipEntry.name.includes('__MACOSX/') && !zipEntry.name.includes('.DS_Store')) {
             console.log(zipEntry.name) // List all file from uploaded zip
             if (zipEntry.name == 'youngandroidproject/project.properties'){
               zip.file(zipEntry.name).async("string").then(function (data) {
@@ -63,7 +64,9 @@ export default function Home() {
                 //operation done, now convert them to JSON supported characters
                 data = data.replaceAll('&#34;','\\"')
                 data = data.replaceAll('&#44;',',')
-                data = data.replaceAll('&#58;',':')        
+                data = data.replaceAll('&#58;',':')
+                // Replace HFF color code with HEX color code
+                data = data.replaceAll('"&HFF','"#')        
                 let bdata = data //this is a tmp workground, create a backup of data, if it doesnt work, then revert this atempt
                 try {
                 //parse json that exist inside a property
@@ -113,6 +116,7 @@ export default function Home() {
               //Detect and warn users when Extensions are used in the AIA
               //Since we are unable to port Extensions (Java Bytecode) to Web Technologies
               console.log('Warning : Extensions are not supported, all related items will generally be ignored.')
+              alert('Warning : Extensions are not supported, all related items will generally be ignored.')
              } else {
               //TODO : all non base64 or string assets should be loaded as binary
              }
@@ -128,6 +132,7 @@ export default function Home() {
               });
               });
             }
+          }
         });
       });
     }
