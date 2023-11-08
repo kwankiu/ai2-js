@@ -45,7 +45,7 @@ export default function Home() {
      zip.loadAsync(files[i])                               
      .then(function(zip) {
         zip.forEach(function (relativePath, zipEntry) {
-          if (!zipEntry.name.includes('__MACOSX/') && !zipEntry.name.includes('.DS_Store')) {
+          if (!zipEntry.name.includes('__MACOSX/') && !zipEntry.name.includes('.DS_Store')) { // Ignore __MACOSX and .DS_Store
             console.log(zipEntry.name) // List all file from uploaded zip
             if (zipEntry.name == 'youngandroidproject/project.properties'){
               zip.file(zipEntry.name).async("string").then(function (data) {
