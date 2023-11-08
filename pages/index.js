@@ -1,6 +1,8 @@
 /* AI2.js - A project that convert MIT App Inventor 2 Project (.aia) into Web Apps
 Author: Samuel (kwankiu), Hei (Hei-dev)
-All rights reserved.
+Copyright (c) 2023 kwankiu
+Copyright (c) 2023 Hei-Dev
+MIT License.
 */
 
 import * as React from 'react';
